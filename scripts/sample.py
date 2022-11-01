@@ -1,7 +1,6 @@
 from rdkit import Chem
 
 import random
-import numpy as np
 import time
 from omegaconf import OmegaConf
 

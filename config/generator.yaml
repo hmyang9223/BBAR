@@ -1,0 +1,17 @@
+model_path: <MODEL_PATH>
+library_path: <LIBRARY_PATH>
+
+# Below is library built-in model file path. (Model Parameter + SMILES and Latent Vectors for fragments in library.)
+# During generation, model vectorizes the fragments in library.
+# You can skip this process by saving all of them: model parameter, library informations.
+# I called it `library built-in model`
+# If below is not `null`, generator save or load library built-in model.
+# If this file exists, upper two parameters (`model_path`, `library_path`) are not needed.
+library_builtin_model_path: <LIBRARY_BUILTIN_MODEL_PATH>
+
+# Required
+n_library_sample: 2000
+alpha: 0.75
+max_iteration: 10
+idx_masking: True
+compose_force: False

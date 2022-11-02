@@ -43,17 +43,22 @@ class MoleculeBuilder() :
         self.target_properties = self.model.cond_keys
         self.cond = None
 
-    def setup(self, condition) :
+    def setup(self, condition: Dict[str, float]) :
         self.cond = self.model.get_cond(condition).unsqueeze(0)
 
     @torch.no_grad()
     def generate(
         self,
         scaffold: Union[Mol, str, None],
+        condition: Optional[Dict[str, float]] = None,
         ) :
-        assert self.cond is not None, \
-            'MoleculeBuilder is not setup. Please call MoleculeBuilder.setup(condition: Dict[property_name, target_value])\n' + \
-            f'required property: {list(self.target_properties)}' 
+        if condition is not None :
+            condition = self.model.get_cond(condition).unsqueeze(0)
+        else :
+            assert self.cond is not None, \
+                'MoleculeBuilder is not setup. Please call MoleculeBuilder.setup(condition: Dict[property_name, target_value])\n' + \
+                f'required property: {list(self.target_properties)}' 
+            condition = self.cond
 
         if scaffold is not None :
             initial_step = 0
@@ -71,7 +76,7 @@ class MoleculeBuilder() :
         for _ in range(initial_step, self.max_iteration) :
             # Graph Embedding
             h_core_0, adj_core = self.get_core_feature(core_mol)
-            h_core_1, Z_core = self.model.graph_embedding_core(h_core_0, adj_core, self.cond)
+            h_core_1, Z_core = self.model.graph_embedding_core(h_core_0, adj_core, condition)
 
             # Predict Termination
             termination = self.predict_termination(Z_core)
